@@ -1,0 +1,12 @@
+﻿Name , Insulation class,Max Rise at Normal Load,MOT,Emergency Greater than 24 h,Emergency 24 h or less
+GE type CF open (1954–1965),130C,90,130,145,160
+Westinghouse type M open,150C,110,150,165,180
+Trench type L Encapsulated < 1981,150C,110,150,170,190
+GE type CF (after 1965) open,155C,115,155,170,190
+Typical 1981– present,105C,65,105,NA,125
+Typical 1981– present,130C,90,130,NA,160
+Trench,B,90,130,155,160
+Trench,F,115,155,180,200
+Trench,H,140,180,200,220
+Alstom-Areva-Ritz open style,155C,115,155,180,195
+Alstom-Areva-Ritz encapsulated style,155C,115,155,180,200

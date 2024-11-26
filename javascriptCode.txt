@@ -1,0 +1,108 @@
+// Control to run the next 3 lines of code
+let traps = importTraps(); // loads in the csv file as an object and I can call each column as a variable
+let types = traps.InsulationClass.map((insulation, index) => `${insulation}-${traps.Name[index]}`); // creating a name for the dropdown menu merging 2 columns with a dash in between
+
+// Control to run the next 26 lines of code 
+// Select Bus
+let selection = types[6]; // drop down menu to select which trap (like for the switches this just finds a column
+let nameplate = 1; // same as switches
+let NYtieCAP = false; // 110 percent cap applied in NY Tie report
+let model = 2; // select which equations to use
+
+// Create the range of air temperatures in F for display, but calculations must be done in C
+let AT = f2c([...Array(126).keys()].map(x => x * 5 - 40)); // from -40 to 125F in 5F steps, create an array and convert it from deg F to deg C
+let TempRangeLabels = [...Array(126).keys()].map(x => x * 5 - 40);
+let He = 0; // elevation in meters
+
+// Conductor parameters
+let index = types.indexOf(selection); // pull in the MOT and Rise from the sheet and show on the screen like switches 
+let MOT = traps.MOT[index];
+let Rise = traps.Rise[index];
+
+// These are flags for later corrections 
+let AltitudeFactor, MaxAT;
+if (He < 1000) { // should probably be a switch but this works 
+    AltitudeFactor = 1;
+    MaxAT = 40; 
+} else if (He < 1500) {
+    AltitudeFactor = 0.99;
+    MaxAT = 37;
+} else {
+    AltitudeFactor = 0.96;
+    MaxAT = 30; 
+}
+
+// PJM Method 
+let I = new Array(AT.length).fill(0); // creates a placeholder array for the result "Rating in Amps" 
+if (model === 1) {
+    let n = 2; // this is the n constant we had before it does not need to be displayed 
+    let delta = MOT - AT; // the MOT constant minus the air temp array
+    I = delta.map((d, index) => d > 0 ? nameplate * Math.pow((MOT - AT[index]) / Rise, 1 / n) : 0); // for every AT provided, if delta is positive, then complete the equation 
+} else { 
+    // NY-Tie Method 
+    let curve = load("TIE_curve.mat"); // had to create a custom curve because they don't have an equation
+    let tempsF = curve[0]; // degrees F as a column extracted from their plot
+    let factors = curve[1].map(factor => factor / 100); // convert from percentage to a multiplier - this gets multiplied by nameplate, column extracted from their plot
+
+    for (let i = 0; i < AT.length; i++) {
+        I[i] = interp1(tempsF, factors, c2f(AT[i]), 'spline'); // If the air temperature is a value between two points in their curve, interpolate the value
+    }
+    if (Math.max(...AT) > 40) { // I extended the curve they provided, we want to warn against using my data in that range 
+        console.warn("Data extrapolated beyond known curve - may contain errors");
+    }
+}
+
+// Elevation Factor
+I = I.map(i => i * AltitudeFactor); // from the earlier elseif block
+
+// Rating in amps
+if (NYtieCAP) {
+    I = I.map(i => i > 1.1 * nameplate ? 1.1 * nameplate : i); // if cap checkbox selected, for all values where rating(I) is more than 110% of the nameplate, set it to 110% of the nameplate
+}
+
+if (Math.max(...AT) > MaxAT) { // if peak air temperature in our range goes above the allowed correction curve throw a warning
+    console.warn("Warning, may be above valid range for local altitude");
+}
+
+if (nameplate < 100) {
+    I = I.map(i => Math.round(i * 100) / 100); // round to 2 decimal places if nameplate is under 100
+} else {
+    I = I.map(i => Math.round(i)); // round to 0 decimal places otherwise
+}
+
+// --- plot data as for switches
+
+// Import Trap Parameters
+// this code won't matter to you, it's just for importing the excel sheet
+
+
+function importTraps() {
+    const fs = require('fs');
+    const path = require('path');
+    const csv = require('csv-parser');
+
+    const trapTable = [];
+    const filePath = path.join("C:", "Users", "pjbe002", "Documents", "MATLAB", "DTCR", "trapTable.csv");
+
+    fs.createReadStream(filePath)
+        .pipe(csv({ headers: ["Name", "InsulationClass", "Rise", "MOT", "EmergencyGreaterThan24H", "Emergency24HOrLess"], skipLines: 1 }))
+        .on('data', (row) => {
+            trapTable.push({
+                Name: row.Name,
+                InsulationClass: row.InsulationClass,
+                Rise: parseFloat(row.Rise),
+                MOT: parseFloat(row.MOT),
+                EmergencyGreaterThan24H: parseFloat(row.EmergencyGreaterThan24H),
+                Emergency24HOrLess: parseFloat(row.Emergency24HOrLess)
+            });
+        })
+        .on('end', () => {
+            console.log('CSV file successfully processed');
+        });
+
+    return trapTable;
+}
+
+
+
+

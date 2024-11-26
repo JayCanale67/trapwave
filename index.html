@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Trap Wave</title>
+
+  <script src=https://cdn.plot.ly/plotly-2.11.1.min.js></script>
+  <script type="text/javascript" src="data/trapwave_data.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+</head>
+
+<body>
+  <div class="row">
+    <div class="form-group col-md-4">
+      <strong>Trap Make and Vintage </strong>
+      <select id="vintageMakeCombo" class="form-select form-select-sm w-100"></select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-md-8 w-100">
+      <strong>Nameplate</strong><br />
+      <input id="namePlateInput" />
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-8 w-100">
+      <input type="checkbox" id="applyNYTieCheckbox" value="0">
+      <label for="vehicle1"> Apply NY-Tie cap to any method</label><br>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="form-group col-md-4">
+      <strong>Rating Methodology</strong>
+      <select id="methodCombo" class="form-select form-select-sm w-100"></select>
+    </div>
+  </div>
+  <div class="row">
+    <div class="form-group col-md-8 w-100">
+      <strong>Elevation (m)</strong><br />
+      <input id="elevationInput" />
+    </div>
+  </div>
+  <div id="inputData"></div>
+  <br />
+  <br />
+  <div id="message1"></div>
+  <div id="message2"></div>
+  <br />
+  <br />
+  <div class="col-md-9 p-3 shadow">
+    <div id="myChart"></div>
+  </div>
+
+  <div id="output"></div>
+
+</body>
+
+
+
+
+
+<script src="data/trapwave_script.js"></script>
+
+</html>
