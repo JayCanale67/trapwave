@@ -82,9 +82,9 @@ document.addEventListener("DOMContentLoaded", () => {
     ]; // degrees F as a column extracted from their plot
 
     //clear messages
-    document.getElementById("message1").innerHTML = "";
-    document.getElementById("message2").innerHTML = "";
-    document.getElementById("inputData").innerHTML = "";
+    //document.getElementById("message1").innerHTML = "";
+    //document.getElementById("message2").innerHTML = "";
+    //document.getElementById("inputData").innerHTML = "";
 
     //search in the JSON file for matching Vintage and Name
     //once found gather the remaining information
@@ -127,7 +127,7 @@ document.addEventListener("DOMContentLoaded", () => {
     var I = new Array(AT.length).fill(0); // creates a placeholder array for the result "Rating in Amps"
     
     //echo the input to the screen
-    document.getElementById("inputData").innerHTML = trapMakeInput.options[trapMakeInput.selectedIndex].value + ", MOT: " + MOT + ", Rise: " + Rise + ", Nameplate: " + nameplate+ ", MaxAT: " + MaxAT+ ", He: " + He+ ", Altitude Factor: " + AltitudeFactor;
+    //document.getElementById("inputData").innerHTML = trapMakeInput.options[trapMakeInput.selectedIndex].value + ", MOT: " + MOT + ", Rise: " + Rise + ", Nameplate: " + nameplate+ ", MaxAT: " + MaxAT+ ", He: " + He+ ", Altitude Factor: " + AltitudeFactor;
 
     //PJM Method
     if (method === 0) {
@@ -167,11 +167,11 @@ document.addEventListener("DOMContentLoaded", () => {
       I = I.map((i) => (i > 1.1 * nameplate ? 1.1 * nameplate : i)); // if cap checkbox selected, for all values where rating(I) is more than 110% of the nameplate, set it to 110% of the nameplate
     }
 
-    if (Math.max(...AT) > MaxAT) {
-      // if peak air temperature in our range goes above the allowed correction curve throw a warning
-      document.getElementById("message2").innerHTML =
-        "Warning, may be above valid range for local altitude";
-    }
+    // if (Math.max(...AT) > MaxAT) {
+    //   // if peak air temperature in our range goes above the allowed correction curve throw a warning
+    //   document.getElementById("message2").innerHTML =
+    //     "Warning, may be above valid range for local altitude";
+    // }
 
     if (nameplate < 100) {
       I = I.map((i) => Math.round(i * 100) / 100); // round to 2 decimal places if nameplate is under 100
@@ -183,7 +183,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const displayDiv = document.getElementById('output');
     // Convert the array to a string and display it
-    displayDiv.innerHTML = I.join(', ');
+    //displayDiv.innerHTML = I.join(', ');
  
     PlotData(tempsF, I);
   }
@@ -211,9 +211,9 @@ document.addEventListener("DOMContentLoaded", () => {
       },
     ];
     var layout = {
-      title: "Switching Chart",
+      title: "Wave Trap Rating",
       xaxis: {
-        title: "Temperature °F",
+        title: "Air Temperature °F",
         range: [-50, 130], // This ensures that the y-axis includes zero
         automargin: true,
         linewidth: "1",
